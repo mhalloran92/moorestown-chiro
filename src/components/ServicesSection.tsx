@@ -1,3 +1,9 @@
+import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site-config";
+import { useScrollFadeIn } from "@/hooks/use-scroll-fade-in";
+
 interface ServicesSectionProps {
   onBookClick: (service: any) => void;
 }
