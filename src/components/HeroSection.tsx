@@ -13,11 +13,11 @@ export default function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 -z-10">
         <img
-          src={siteConfig.author.image}
-          alt={siteConfig.author.name}
+          src="/hero-bg.png"
+          alt="Moorestown Chiropractic Clinic"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/70" />
       </div>
 
       {/* Gradient overlay */}

@@ -17,7 +17,16 @@ export default function ServicesSection() {
   };
 
   return (
-    <section id="services" className="py-24 md:py-32">
+    <section id="services" className="relative py-24 md:py-32 overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 -z-10 opacity-30">
+        <img
+          src="/wellness-bg.png"
+          alt="Wellness Background"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-background/80" />
+      </div>
       <div className="container" ref={ref}>
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Appointment Types</h2>

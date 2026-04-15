@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: "Generic Appt",
-  fullName: "Generic Appointment Services",
-  description: "Structured, evidence-based care designed for lasting relief.",
+  name: "Moorestown Chiro",
+  fullName: "Moorestown Chiropractic and Wellness",
+  description: "Advanced chiropractic care and wellness services in Moorestown, NJ.",
   nav: [
     { id: "hero", label: "Overview" },
     { id: "book", label: "Book Now" },
@@ -10,20 +10,20 @@ export const siteConfig = {
     { id: "logistics", label: "What to Expect" },
   ],
   author: {
-    name: "Dr. Jane Doe",
-    title: "Lead Practitioner",
-    initials: "JD",
-    bio: "Focused on restoring movement, reducing pain, and supporting long-term performance.",
-    fullBio: "A dedicated professional focused on structured, evidence-informed care for people who need predictable progress — not quick fixes.",
+    name: "Dr. Grant Parnagian",
+    title: "Lead Chiropractor",
+    initials: "GP",
+    bio: "Dedicated to restoring movement and supporting long-term wellness for the Moorestown community.",
+    fullBio: "Dr. Grant Parnagian is committed to providing structured, evidence-informed chiropractic care. His approach focuses on identifying the root cause of discomfort and creating sustainable paths to recovery and performance.",
     image: "/placeholder-practitioner.jpg",
   },
   location: {
-    city: "Your City",
-    address: "123 Business St, City, State 12345",
+    city: "Moorestown",
+    address: "128 Borton Landing Road, Moorestown NJ 08057",
   },
   contact: {
-    phone: "(555) 000-0000",
-    email: "hello@example.com",
+    phone: "856-234-6373",
+    email: "email@moorestownchiro.com",
   },
   calendly: {
     url: "https://calendly.com/michael-halloranai",
@@ -32,9 +32,9 @@ export const siteConfig = {
     primary: "#0066FF",
   },
   credentials: [
-    "Certified Practitioner",
-    "Evidence-informed approach & rehab focus",
-    "Experience with a wide range of client cases",
+    "Doctor of Chiropractic",
+    "Evidence-informed clinical approach",
+    "Wellness & performance optimization focus",
   ],
   services: [
     {
@@ -46,7 +46,6 @@ export const siteConfig = {
       frequency: "Most patients start with 1–2 visits in the first month.",
       price: "Starting at $140",
       calendlyUrl: "https://calendly.com/michael-halloranai/30min",
-      stripePriceId: "price_1TIVC0Ln6dyiu6dtIQZOJUkh"
     },
     {
       id: "standard",
@@ -57,7 +56,6 @@ export const siteConfig = {
       frequency: "Often scheduled weekly, then tapered as symptoms improve.",
       price: "Starting at $80",
       calendlyUrl: "https://calendly.com/michael-halloranai/standard-adjustment",
-      stripePriceId: "price_1TIVGpLn6dyiu6dt3suYJRWS"
     },
     {
       id: "mobility",
@@ -68,7 +66,6 @@ export const siteConfig = {
       frequency: "Typically every 2–4 weeks during training blocks.",
       price: "Starting at $95",
       calendlyUrl: "https://calendly.com/michael-halloranai/mobility-movement-session",
-      stripePriceId: "price_1TIVHgLn6dyiu6dtB6znTfZE"
     },
     {
       id: "posture",
@@ -79,7 +76,6 @@ export const siteConfig = {
       frequency: "Commonly every 3–6 weeks depending on workload.",
       price: "Starting at $95",
       calendlyUrl: "https://calendly.com/michael-halloranai/posture-desk-relief-visit",
-      stripePriceId: "price_1TIVIHLn6dyiu6dtvUcVfGcr"
     },
   ],
   approach: [
@@ -92,8 +88,8 @@ export const siteConfig = {
       text: "Clear, structured treatment plans focused on long-term outcomes." 
     },
     { 
-      title: "Patient-centered", 
-      text: "Serving busy professionals and families with respect for their time." 
+      title: "Wellness-focused", 
+      text: "Supporting busy professionals and families with care that fits their lifestyle." 
     },
   ]
 };

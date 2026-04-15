@@ -44,7 +44,7 @@ export default function LogisticsSection() {
               <div>
                 <p className="font-semibold mb-1">Location</p>
                 <p className="text-sm text-muted-foreground">
-                  Pittsburgh, Pennsylvania · Private, appointment-based clinic setting.
+                  Moorestown, New Jersey · Private, appointment-based clinic setting.
                 </p>
               </div>
             </div>

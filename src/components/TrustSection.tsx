@@ -5,7 +5,16 @@ export default function TrustSection() {
   const { ref, isVisible } = useScrollFadeIn();
 
   return (
-    <section id="trust" className="py-24 md:py-32 bg-secondary/20" ref={ref}>
+    <section id="trust" className="relative py-24 md:py-32 overflow-hidden" ref={ref}>
+      {/* Background Image */}
+      <div className="absolute inset-0 -z-10">
+        <img
+          src="/spine-bg.png"
+          alt="Spine Abstract Background"
+          className="w-full h-full object-cover opacity-10"
+        />
+        <div className="absolute inset-0 bg-secondary/10" />
+      </div>
       <div className="container">
         <div
           className={`grid md:grid-cols-2 gap-12 md:gap-16 items-center ${isVisible ? "animate-fade-in" : "opacity-0"

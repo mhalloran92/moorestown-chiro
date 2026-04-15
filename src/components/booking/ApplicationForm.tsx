@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { loadStripe } from "@stripe/stripe-js";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +36,7 @@ interface ApplicationFormProps {
     id: string;
     name: string;
     price: string;
-    stripePriceId?: string;
+    calendlyUrl?: string;
   };
 }
 
@@ -57,33 +56,18 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      // 1. Initialize Stripe
-      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
-      if (!stripe) throw new Error("Stripe failed to load");
+      // Simulate a short delay for lead capture feel
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      if (!service.calendlyUrl) {
+        throw new Error("Booking link not found");
+      }
 
-      // 2. Call our Vercel Serverless Function
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          priceId: service.stripePriceId,
-          name: values.name,
-          email: values.email,
-          serviceName: service.name,
-          successUrl: `${window.location.origin}/booking-success?email=${encodeURIComponent(values.email)}&name=${encodeURIComponent(values.name)}`,
-          cancelUrl: window.location.href,
-        }),
-      });
-
-      const { url, error } = await response.json();
-
-      if (error) throw new Error(error);
-
-      // 3. Redirect to Stripe Checkout
-      window.location.href = url;
+      // Redirect directly to Calendly
+      window.location.href = service.calendlyUrl;
     } catch (error: any) {
-      console.error("Payment Error:", error);
-      toast.error("There was an issue initiating your payment. Please try again.");
+      console.error("Booking Error:", error);
+      toast.error("There was an issue initiating your booking. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -93,10 +77,10 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] overflow-hidden rounded-2xl bg-card/95 backdrop-blur-md border border-primary/20 shadow-2xl shadow-primary/10">
         <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl font-bold tracking-tight">Apply for Treatment</DialogTitle>
+          <DialogTitle className="text-2xl font-bold tracking-tight">Schedule Your Visit</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            You're booking: <span className="font-semibold text-foreground">{service.name}</span> ({service.price}). 
-            Complete this form to proceed to payment.
+            You're booking: <span className="font-semibold text-foreground">{service.name}</span>. 
+            Complete this form to continue to scheduling.
           </DialogDescription>
         </DialogHeader>
 
@@ -137,7 +121,7 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="(555) 000-0000" {...field} />
+                    <Input placeholder="856-000-0000" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,15 +150,15 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Securing Session...
+                  Connecting...
                 </>
               ) : (
-                <>Pay & Continue to Booking</>
+                <>Continue to Booking</>
               )}
             </Button>
             
             <p className="text-[11px] text-center text-muted-foreground italic px-4">
-              Secure payment processed via Stripe. You'll pick your actual appointment time on the next page.
+              You'll pick your actual appointment time on the next page via Calendly.
             </p>
           </form>
         </Form>

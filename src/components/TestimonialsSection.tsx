@@ -13,7 +13,7 @@ const testimonials = [
   },
   {
     quote:
-      "Dr. Jeffery Kamzik gave me a clear plan from day one. No guesswork, just steady improvement.",
+      "Dr. Grant Parnagian gave me a clear plan from day one. No guesswork, just steady improvement.",
     name: "Mark",
     detail: "42, Software Engineer",
     tag: "Neck & shoulder pain · 8 visits",
