@@ -11,9 +11,9 @@ export default function TrustSection() {
         <img
           src="/spine-bg.png"
           alt="Spine Abstract Background"
-          className="w-full h-full object-cover opacity-10"
+          className="w-full h-full object-cover opacity-25"
         />
-        <div className="absolute inset-0 bg-secondary/10" />
+        <div className="absolute inset-0 bg-secondary/5" />
       </div>
       <div className="container">
         <div

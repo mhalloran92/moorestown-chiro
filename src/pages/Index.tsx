@@ -1,3 +1,4 @@
+import { useState } from "react";
 import StickyHeader from "@/components/StickyHeader";
 import HeroSection from "@/components/HeroSection";
 import ServicesSection from "@/components/ServicesSection";
@@ -6,19 +7,35 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import LogisticsSection from "@/components/LogisticsSection";
 import FinalCTA from "@/components/FinalCTA";
 import { siteConfig } from "@/config/site-config";
+import ApplicationForm from "@/components/booking/ApplicationForm";
 
 const Index = () => {
+  const [selectedService, setSelectedService] = useState<any>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const handleBookClick = (service: any = null) => {
+    setSelectedService(service);
+    setIsFormOpen(true);
+  };
+
   return (
     <>
-      <StickyHeader />
+      <StickyHeader onBookClick={() => handleBookClick(null)} />
       <main>
-        <HeroSection />
-        <ServicesSection />
+        <HeroSection onBookClick={() => handleBookClick(null)} />
+        <ServicesSection onBookClick={handleBookClick} />
         <TrustSection />
         <TestimonialsSection />
         <LogisticsSection />
-        <FinalCTA />
+        <FinalCTA onBookClick={() => handleBookClick(null)} />
       </main>
+
+      <ApplicationForm 
+        isOpen={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        service={selectedService}
+      />
+
       <footer className="border-t border-border py-8 bg-background/95">
         <div className="container flex flex-col gap-4 text-center md:text-left md:flex-row md:items-center md:justify-between text-xs text-muted-foreground">
           <div className="space-y-1">

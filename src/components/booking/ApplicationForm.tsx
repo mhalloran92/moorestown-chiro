@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,25 +19,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { siteConfig } from "@/config/site-config";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone: z.string().min(6, { message: "Please enter a valid phone number." }),
+  serviceId: z.string().min(1, { message: "Please select a service." }),
   concern: z.string().optional(),
 });
 
 interface ApplicationFormProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  service: {
+  service?: {
     id: string;
     name: string;
     price: string;
     calendlyUrl?: string;
-  };
+  } | null;
 }
 
 export default function ApplicationForm({ isOpen, onOpenChange, service }: ApplicationFormProps) {
@@ -49,22 +58,34 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
       name: "",
       email: "",
       phone: "",
+      serviceId: service?.id || "",
       concern: "",
     },
   });
 
+  // Sync form with service prop when it changes or modal opens
+  useEffect(() => {
+    if (isOpen) {
+      form.setValue("serviceId", service?.id || "");
+    } else {
+      form.reset();
+    }
+  }, [service, isOpen, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
-      // Simulate a short delay for lead capture feel
+      // Simulate lead capture delay
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      if (!service.calendlyUrl) {
+      const selectedService = siteConfig.services.find(s => s.id === values.serviceId);
+      
+      if (!selectedService?.calendlyUrl) {
         throw new Error("Booking link not found");
       }
 
       // Redirect directly to Calendly
-      window.location.href = service.calendlyUrl;
+      window.location.href = selectedService.calendlyUrl;
     } catch (error: any) {
       console.error("Booking Error:", error);
       toast.error("There was an issue initiating your booking. Please try again.");
@@ -77,15 +98,50 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] overflow-hidden rounded-2xl bg-card/95 backdrop-blur-md border border-primary/20 shadow-2xl shadow-primary/10">
         <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl font-bold tracking-tight">Schedule Your Visit</DialogTitle>
+          <DialogTitle className="text-2xl font-bold tracking-tight">
+            {service ? "Schedule Your Visit" : "Book Your Appointment"}
+          </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            You're booking: <span className="font-semibold text-foreground">{service.name}</span>. 
-            Complete this form to continue to scheduling.
+            {service ? (
+              <>
+                You're booking: <span className="font-semibold text-foreground">{service.name}</span>.
+              </>
+            ) : (
+              "Choose your service and provide your details to continue to scheduling."
+            )}
+            Complete this form to continue.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+            {!service && (
+              <FormField
+                control={form.control}
+                name="serviceId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Service</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose a treatment" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {siteConfig.services.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name} ({s.price})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <FormField
               control={form.control}
               name="name"

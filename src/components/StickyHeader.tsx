@@ -12,11 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User as UserIcon, LogOut, LayoutDashboard } from "lucide-react";
-import CalendlyPopupButton from "./calendly/CalendlyPopupButton";
 
 import { siteConfig } from "@/config/site-config";
 
-export default function StickyHeader() {
+interface StickyHeaderProps {
+  onBookClick: () => void;
+}
+
+export default function StickyHeader({ onBookClick }: StickyHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const { user, role, avatarUrl, signOut } = useAuth();
 
@@ -110,11 +113,13 @@ export default function StickyHeader() {
               </Button>
             </Link>
           )}
-          <CalendlyPopupButton 
-            text="Book"
+          <Button 
             size="sm"
+            onClick={onBookClick}
             className="hover-scale focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          />
+          >
+            Book
+          </Button>
         </div>
       </div>
     </header>

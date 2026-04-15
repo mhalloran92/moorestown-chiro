@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { scrollToSection } from "@/lib/scroll-to-section";
 import { ArrowRight } from "lucide-react";
-import CalendlyPopupButton from "./calendly/CalendlyPopupButton";
 import { siteConfig } from "@/config/site-config";
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  onBookClick: () => void;
+}
+
+export default function HeroSection({ onBookClick }: HeroSectionProps) {
   return (
     <section
       id="hero"
@@ -17,7 +20,7 @@ export default function HeroSection() {
           alt="Moorestown Chiropractic Clinic"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-black/45" />
       </div>
 
       {/* Gradient overlay */}
@@ -43,7 +46,7 @@ export default function HeroSection() {
           <Button
             size="lg"
             className="hover-scale text-base px-8 py-6 h-auto"
-            onClick={() => scrollToSection("services")}
+            onClick={onBookClick}
           >
             Book Your Appointment
           </Button>

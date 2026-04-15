@@ -1,20 +1,9 @@
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { useScrollFadeIn } from "@/hooks/use-scroll-fade-in";
-import { Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/config/site-config";
-import ApplicationForm from "./booking/ApplicationForm";
+interface ServicesSectionProps {
+  onBookClick: (service: any) => void;
+}
 
-export default function ServicesSection() {
+export default function ServicesSection({ onBookClick }: ServicesSectionProps) {
   const { ref, isVisible } = useScrollFadeIn();
-  const [selectedService, setSelectedService] = useState<any>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
-  const handleBookClick = (service: any) => {
-    setSelectedService(service);
-    setIsFormOpen(true);
-  };
 
   return (
     <section id="services" className="relative py-24 md:py-32 overflow-hidden">
@@ -25,7 +14,7 @@ export default function ServicesSection() {
           alt="Wellness Background"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-background/80" />
+        <div className="absolute inset-0 bg-background/50" />
       </div>
       <div className="container" ref={ref}>
         <div className="text-center mb-12 md:mb-16">
@@ -83,7 +72,7 @@ export default function ServicesSection() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleBookClick(s)}
+                onClick={() => onBookClick(s)}
                 className="w-full group-hover:border-primary group-hover:text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Book This Session
@@ -92,14 +81,6 @@ export default function ServicesSection() {
           ))}
         </div>
       </div>
-
-      {selectedService && (
-        <ApplicationForm
-          isOpen={isFormOpen}
-          onOpenChange={setIsFormOpen}
-          service={selectedService}
-        />
-      )}
     </section>
   );
 }

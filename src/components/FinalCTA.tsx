@@ -2,7 +2,11 @@ import { useScrollFadeIn } from "@/hooks/use-scroll-fade-in";
 import { Button } from "@/components/ui/button";
 import { scrollToSection } from "@/lib/scroll-to-section";
 
-export default function FinalCTA() {
+interface FinalCTAProps {
+  onBookClick: () => void;
+}
+
+export default function FinalCTA({ onBookClick }: FinalCTAProps) {
   const { ref, isVisible } = useScrollFadeIn();
 
   return (
@@ -24,7 +28,7 @@ export default function FinalCTA() {
         <Button 
           size="lg"
           className="hover-scale text-base px-10 py-6 h-auto"
-          onClick={() => scrollToSection("services")}
+          onClick={onBookClick}
         >
           Book Your Appointment
         </Button>
