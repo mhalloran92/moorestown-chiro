@@ -51,11 +51,31 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // 3. Map Event Name to Session Type
-    // Default mapping, can be expanded
-    let sessionTypeId = "6dbbd45f-3554-4546-879b-90ae89e104db"; // Default to Standard Adjustment
-    if (eventTypeName.toLowerCase().includes("initial") || eventTypeName.toLowerCase().includes("consult")) {
-      sessionTypeId = "581ed3fc-dfcd-424f-9aaf-62567a9972e4"; // Initial Consultation
+    // 3. Map Event Name to Session Type dynamically
+    // We search for a session type that matches the Calendly event name
+    const { data: sessionType, error: typeError } = await supabase
+      .from("session_types")
+      .select("id")
+      .ilike("title", `%${eventTypeName}%`)
+      .limit(1)
+      .maybeSingle();
+
+    let sessionTypeId = sessionType?.id;
+
+    // Fallback logic if naming doesn't match perfectly
+    if (!sessionTypeId) {
+       console.log("No direct title match, using fallback mapping...");
+       const fallbackTitle = eventTypeName.toLowerCase().includes("initial") ? "Initial Consultation" : "Standard Adjustment";
+       const { data: fallbackType } = await supabase
+         .from("session_types")
+         .select("id")
+         .eq("title", fallbackTitle)
+         .single();
+       sessionTypeId = fallbackType?.id;
+    }
+
+    if (!sessionTypeId) {
+      throw new Error(`Could not determine session type for: ${eventTypeName}`);
     }
 
     // 4. Find or Create Session
@@ -104,8 +124,7 @@ Deno.serve(async (req: Request) => {
       .insert({
         user_id: profile.id,
         session_id: finalSessionId,
-        status: "confirmed",
-        payment_status: "unpaid"
+        status: "confirmed"
       })
       .select()
       .single();

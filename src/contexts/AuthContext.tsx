@@ -7,24 +7,31 @@ type Role = "user" | "client" | "admin" | "banned";
 interface AuthContextType {
   user: User | null;
   role: Role | null;
+  profile: {
+    first_name: string | null;
+    last_name: string | null;
+    phone: string | null;
+  } | null;
   avatarUrl: string | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
-  refreshAvatar: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   role: null,
+  profile: null,
   avatarUrl: null,
   isLoading: true,
   signOut: async () => {},
-  refreshAvatar: async () => {},
+  refreshProfile: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<Role | null>(null);
+  const [profile, setProfile] = useState<AuthContextType['profile']>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -46,6 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         fetchProfileData(session.user.id);
       } else {
         setRole(null);
+        setProfile(null);
         setAvatarUrl(null);
         setIsLoading(false);
       }
@@ -58,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("role, avatar_url")
+        .select("role, avatar_url, first_name, last_name, phone")
         .eq("id", userId)
         .single();
 
@@ -66,6 +74,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Error fetching profile data:", error);
       } else if (data) {
         setRole(data.role as Role);
+        setProfile({
+          first_name: data.first_name,
+          last_name: data.last_name,
+          phone: data.phone,
+        });
         
         if (data.avatar_url) {
           const { data: storageData, error: storageError } = await supabase.storage
@@ -86,7 +99,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const refreshAvatar = async () => {
+  const refreshProfile = async () => {
     if (user) await fetchProfileData(user.id);
   };
 
@@ -95,7 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, avatarUrl, isLoading, signOut, refreshAvatar }}>
+    <AuthContext.Provider value={{ user, role, profile, avatarUrl, isLoading, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

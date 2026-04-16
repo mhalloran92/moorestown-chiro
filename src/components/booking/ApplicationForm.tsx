@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { InlineWidget } from "react-calendly";
+import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 import {
   Dialog,
   DialogContent,
@@ -28,8 +28,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, LayoutDashboard } from "lucide-react";
 import { siteConfig } from "@/config/site-config";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -51,8 +53,10 @@ interface ApplicationFormProps {
 }
 
 export default function ApplicationForm({ isOpen, onOpenChange, service }: ApplicationFormProps) {
+  const { user, profile } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState<z.infer<typeof formSchema> | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -71,14 +75,31 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
     if (isOpen) {
       if (!showCalendar) {
         form.setValue("serviceId", service?.id || "");
+        
+        // Auto-fill and lock for logged in users
+        if (profile) {
+          form.setValue("name", `${profile.first_name || ""} ${profile.last_name || ""}`.trim());
+          form.setValue("email", user?.email || "");
+          form.setValue("phone", profile.phone || "");
+        }
       }
     } else {
       // Reset everything when modal closes
       setShowCalendar(false);
+      setIsSuccess(false);
       setFormData(null);
       form.reset();
     }
-  }, [service, isOpen, form, showCalendar]);
+  }, [service, isOpen, form, showCalendar, profile, user]);
+
+  // Listen for Calendly events
+  useCalendlyEventListener({
+    onEventScheduled: (e) => {
+      console.log("Calendly Event:", e);
+      setIsSuccess(true);
+      toast.success("Appointment successfully scheduled!");
+    },
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -133,7 +154,9 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
               )}
             </div>
             <DialogDescription className="text-slate-400 font-medium">
-              {showCalendar ? (
+              {isSuccess ? (
+                <>Your appointment for <span className="text-primary font-bold">{selectedServiceObj?.name}</span> is confirmed. We've sent the details to your email.</>
+              ) : showCalendar ? (
                 <>Almost there! Choose a time for your <span className="text-primary font-bold">{selectedServiceObj?.name}</span>.</>
               ) : (
                 <>Provide your contact information to view available times for <span className="text-primary font-bold">{service?.name || "your session"}</span>.</>
@@ -179,7 +202,12 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
                       <FormItem>
                         <FormLabel className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-500 px-1">Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" {...field} className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/40" />
+                          <Input 
+                            placeholder="John Doe" 
+                            {...field} 
+                            disabled={!!profile}
+                            className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/40 disabled:opacity-80 disabled:bg-white/10" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -193,7 +221,12 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
                       <FormItem>
                         <FormLabel className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-500 px-1">Email Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="john@example.com" {...field} className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/40" />
+                          <Input 
+                            placeholder="john@example.com" 
+                            {...field} 
+                            disabled={!!profile}
+                            className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/40 disabled:opacity-80 disabled:bg-white/10" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -207,7 +240,12 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
                       <FormItem>
                         <FormLabel className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-500 px-1">Phone Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="856-000-0000" {...field} className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/40" />
+                          <Input 
+                            placeholder="856-000-0000" 
+                            {...field} 
+                            disabled={!!profile && !!profile.phone}
+                            className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/40 disabled:opacity-80 disabled:bg-white/10" 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -235,6 +273,33 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
                 </p>
               </form>
             </Form>
+          ) : isSuccess ? (
+            <div className="py-12 flex flex-col items-center text-center space-y-6 animate-in zoom-in duration-500">
+              <div className="h-24 w-24 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                <CheckCircle2 className="h-12 w-12" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-3xl font-black text-white">Booking Confirmed!</h3>
+                <p className="text-slate-400 max-w-xs mx-auto">
+                  Your clinical adjustment has been scheduled. You can view your care plan and appointment details in your dashboard.
+                </p>
+              </div>
+              <div className="pt-4 flex flex-col w-full gap-3">
+                <Link to="/dashboard" className="w-full" onClick={() => onOpenChange(false)}>
+                  <Button className="w-full h-14 rounded-2xl font-bold bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20">
+                    <LayoutDashboard className="w-5 h-5 mr-2" />
+                    Go to Dashboard
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  className="w-full h-14 rounded-2xl font-bold text-slate-400 hover:text-white"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Close Window
+                </Button>
+              </div>
+            </div>
           ) : (
             <div className="mt-4 h-full min-h-[500px] bg-white/5 rounded-2xl overflow-hidden border border-white/5">
               <InlineWidget
