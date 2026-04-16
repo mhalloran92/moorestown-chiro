@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Moorestown Chiro",
   fullName: "Moorestown Chiropractic and Wellness",
-  description: "Advanced chiropractic care and wellness services in Moorestown, NJ.",
+  description: "Advanced chiropractic care and wellness services in Moorestown",
   nav: [
     { id: "hero", label: "Overview" },
     { id: "book", label: "Book Now" },
@@ -15,7 +15,7 @@ export const siteConfig = {
     initials: "GP",
     bio: "Dedicated to restoring movement and supporting long-term wellness for the Moorestown community.",
     fullBio: "Dr. Grant Parnagian is committed to providing structured, evidence-informed chiropractic care. His approach focuses on identifying the root cause of discomfort and creating sustainable paths to recovery and performance.",
-    image: "/placeholder-practitioner.jpg",
+    image: "/moorestown_chiropractor_profile_1776373394451.png",
   },
   location: {
     city: "Moorestown",
