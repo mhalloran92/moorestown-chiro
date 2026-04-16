@@ -60,6 +60,7 @@ export const Profile = () => {
         .from("profiles")
         .upsert({
           id: user?.id,
+          email: user?.email,
           first_name: firstName,
           last_name: lastName,
           phone: phone,
