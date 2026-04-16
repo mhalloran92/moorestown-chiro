@@ -12,11 +12,13 @@ import {
   ChevronLeft,
   Loader2
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Resource {
   id: string;
@@ -86,65 +88,49 @@ const Resources = () => {
     return matchesCategory && matchesSearch;
   });
 
-  if (selectedResource) {
-    const IconComponent = iconMap[selectedResource.icon_name] || BookOpen;
-    return (
-      <DashboardLayout>
-        <div className="max-w-4xl mx-auto">
-          <Button 
-            variant="ghost" 
-            className="mb-8 group text-slate-500 hover:text-primary transition-all"
-            onClick={() => setSelectedResource(null)}
-          >
-            <ChevronLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Resources
-          </Button>
-
-          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
-            <div className={`p-8 md:p-12 ${categoryInfo[selectedResource.category as keyof typeof categoryInfo]?.bg || 'bg-slate-50'}`}>
-              <Badge className="mb-4 bg-white/80 backdrop-blur-sm text-primary border-none text-[10px] font-bold tracking-widest uppercase">
-                {categoryInfo[selectedResource.category as keyof typeof categoryInfo]?.title || 'Resource'}
-              </Badge>
-              <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 leading-tight">
-                {selectedResource.title}
-              </h1>
-              <div className="flex items-center gap-6 text-slate-900 font-bold text-sm">
-                <span className="flex items-center gap-2">
-                  <IconComponent className="h-5 w-5 text-primary" />
-                  Clinical Resource
-                </span>
-              </div>
-            </div>
-
-            <div className="p-8 md:p-12 prose prose-slate max-w-none">
-              <style dangerouslySetInnerHTML={{ __html: `
-                .prose h2 { font-weight: 800; color: #0f172a; margin-top: 2rem; }
-                .prose h3 { font-weight: 700; color: #1e293b; margin-top: 1.5rem; }
-                .prose ul { list-style-type: none; padding-left: 0; }
-                .prose li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; color: #0f172a; font-weight: 500; }
-                .prose li::before { content: '•'; position: absolute; left: 0; color: #2563eb; font-weight: bold; }
-                .prose p { line-height: 1.8; color: #0f172a; font-weight: 500; font-size: 1.05rem; }
-                .prose strong { color: #000; font-weight: 800; }
-              `}} />
-              <div dangerouslySetInnerHTML={{ __html: selectedResource.content }} />
-              
-              <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-sm text-slate-400 font-medium">Source: Moorestown Chiro Clinical Archive</p>
-                <Button className="rounded-full gap-2" onClick={() => window.print()}>
-                  <ExternalLink className="h-4 w-4" />
-                  Print Guide
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout>
       <div className="space-y-8">
+        {/* Resource Detail Modal */}
+        <Dialog open={!!selectedResource} onOpenChange={(open) => !open && setSelectedResource(null)}>
+          <DialogContent className="max-w-4xl h-auto max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
+            {selectedResource && (
+              <>
+                <div className={`p-8 md:p-12 ${categoryInfo[selectedResource.category as keyof typeof categoryInfo]?.bg || 'bg-slate-50'}`}>
+                  <Badge className="mb-4 bg-white/80 backdrop-blur-sm text-primary border-none text-[10px] font-bold tracking-widest uppercase">
+                    {categoryInfo[selectedResource.category as keyof typeof categoryInfo]?.title || 'Resource'}
+                  </Badge>
+                  <DialogTitle className="text-2xl md:text-3xl font-black text-slate-900 mb-0 leading-tight">
+                    {selectedResource.title}
+                  </DialogTitle>
+                </div>
+
+                <ScrollArea className="flex-1 p-8 md:p-12">
+                  <div className="prose prose-slate max-w-none">
+                    <style dangerouslySetInnerHTML={{ __html: `
+                      .prose h2 { font-weight: 800; color: #0f172a; margin-top: 2rem; }
+                      .prose h3 { font-weight: 700; color: #1e293b; margin-top: 1.5rem; }
+                      .prose ul { list-style-type: none; padding-left: 0; }
+                      .prose li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; color: #0f172a; font-weight: 500; }
+                      .prose li::before { content: '•'; position: absolute; left: 0; color: #2563eb; font-weight: bold; }
+                      .prose p { line-height: 1.8; color: #0f172a; font-weight: 500; font-size: 1.05rem; }
+                      .prose strong { color: #000; font-weight: 800; }
+                    `}} />
+                    <div dangerouslySetInnerHTML={{ __html: selectedResource.content }} />
+                    
+                    <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 pb-8">
+                      <p className="text-sm text-slate-400 font-medium">Source: Moorestown Chiro Clinical Archive</p>
+                      <Button className="rounded-full gap-2" onClick={() => window.print()}>
+                        <ExternalLink className="h-4 w-4" />
+                        Print Guide
+                      </Button>
+                    </div>
+                  </div>
+                </ScrollArea>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
