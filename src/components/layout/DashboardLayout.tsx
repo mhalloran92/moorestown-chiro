@@ -9,7 +9,9 @@ import {
   Bell,
   Search,
   User as UserIcon,
-  Menu,
+  ChevronDown,
+  ChevronUp,
+  BookOpen,
   X
 } from "lucide-react";
 import {
@@ -28,6 +30,7 @@ export const DashboardLayout = ({ children, isAdmin = false }: { children: React
   const { signOut, user, role, avatarUrl } = useAuth();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [openMenus, setOpenMenus] = useState<string[]>(["Resources"]); // Default Resources to open
 
   const adminLinks = [
     { label: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -38,8 +41,18 @@ export const DashboardLayout = ({ children, isAdmin = false }: { children: React
 
   const clientLinks = [
     { label: "My Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Management", href: "/dashboard", icon: Calendar }, // Points back to main hub for now
+    { label: "Management", href: "/dashboard", icon: Calendar },
     { label: "Profile", href: "/profile", icon: Users },
+    { 
+      label: "Resources", 
+      href: "/resources", 
+      icon: BookOpen,
+      sublinks: [
+        { label: "Clinical Guides", href: "/resources?category=clinical" },
+        { label: "Mobility Techniques", href: "/resources?category=mobility" },
+        { label: "Nutritional Wellness", href: "/resources?category=nutrition" },
+      ]
+    },
     { label: "Notifications", href: "/notifications", icon: Bell },
   ];
 
@@ -65,21 +78,62 @@ export const DashboardLayout = ({ children, isAdmin = false }: { children: React
       <nav className="flex-1 py-6 px-4 space-y-1.5">
         {links.map((link) => {
           const Icon = link.icon;
-          const isActive = location.pathname === link.href;
+          const hasSublinks = link.sublinks && link.sublinks.length > 0;
+          const isMenuOpen = openMenus.includes(link.label);
+          const isActive = location.pathname === link.href || (hasSublinks && link.sublinks?.some(sub => location.pathname === sub.href));
+
           return (
-            <Link
-              key={link.href}
-              to={link.href}
-              onClick={() => setIsSidebarOpen(false)}
-              className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
-                isActive 
-                  ? "text-primary bg-primary/5 shadow-sm shadow-primary/5" 
-                  : "text-slate-600 hover:text-primary hover:bg-slate-50"
-              }`}
-            >
-              <Icon className={`mr-3 h-5 w-5 ${isActive ? "text-primary" : "text-slate-400 opacity-80"}`} />
-              {link.label}
-            </Link>
+            <div key={link.label} className="space-y-1">
+              {hasSublinks ? (
+                <button
+                  onClick={() => setOpenMenus(prev => prev.includes(link.label) ? prev.filter(l => l !== link.label) : [...prev, link.label])}
+                  className={`flex items-center justify-between w-full px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
+                    isActive 
+                      ? "text-primary bg-primary/5" 
+                      : "text-slate-600 hover:text-primary hover:bg-slate-50"
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <Icon className={`mr-3 h-5 w-5 ${isActive ? "text-primary" : "text-slate-400 opacity-80"}`} />
+                    {link.label}
+                  </div>
+                  {isMenuOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </button>
+              ) : (
+                <Link
+                  to={link.href}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className={`flex items-center px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
+                    isActive 
+                      ? "text-primary bg-primary/5 shadow-sm shadow-primary/5" 
+                      : "text-slate-600 hover:text-primary hover:bg-slate-50"
+                  }`}
+                >
+                  <Icon className={`mr-3 h-5 w-5 ${isActive ? "text-primary" : "text-slate-400 opacity-80"}`} />
+                  {link.label}
+                </Link>
+              )}
+
+              {/* Sublinks */}
+              {hasSublinks && isMenuOpen && (
+                <div className="pl-11 space-y-1 mt-1">
+                  {link.sublinks?.map((sub) => (
+                    <Link
+                      key={sub.label}
+                      to={sub.href}
+                      onClick={() => setIsSidebarOpen(false)}
+                      className={`block px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+                        location.pathname + location.search === sub.href
+                          ? "text-primary bg-primary/5"
+                          : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
+                      }`}
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>

@@ -179,37 +179,37 @@ export const Profile = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700">First Name</label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 px-1">First Name</label>
                 <input
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 font-semibold sm:text-sm transition-all bg-white"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700">Last Name</label>
+                <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 px-1">Last Name</label>
                 <input
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 font-semibold sm:text-sm transition-all bg-white"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700">Phone Number</label>
+              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 px-1">Phone Number</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-900 font-semibold sm:text-sm transition-all bg-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700">Email Address</label>
+              <label className="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 px-1">Email Address</label>
               <input
                 type="email"
                 disabled
