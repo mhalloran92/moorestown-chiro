@@ -8,7 +8,6 @@ import {
   ChevronRight, 
   Search,
   ArrowLeft,
-  Clock,
   ExternalLink,
   ChevronLeft,
   Loader2
@@ -22,10 +21,9 @@ import { toast } from "sonner";
 interface Resource {
   id: string;
   title: string;
-  category: "clinical" | "mobility" | "nutrition";
+  category: string;
   description: string;
   content: string;
-  read_time: string;
   icon_name: string;
 }
 
@@ -67,6 +65,7 @@ const Resources = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
+      console.log("Fetched resources:", data); // Debug log
       setResources(data || []);
     } catch (error: any) {
       console.error("Error fetching resources:", error);
@@ -77,7 +76,11 @@ const Resources = () => {
   };
 
   const filteredResources = resources.filter(r => {
-    const matchesCategory = !category || r.category === category;
+    // Normalize category for matching
+    const resourceCat = r.category?.toLowerCase();
+    const activeCat = category?.toLowerCase();
+    
+    const matchesCategory = !activeCat || resourceCat === activeCat;
     const matchesSearch = r.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           r.description?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -105,14 +108,10 @@ const Resources = () => {
               <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 leading-tight">
                 {selectedResource.title}
               </h1>
-              <div className="flex items-center gap-6 text-slate-600 font-medium text-sm">
+              <div className="flex items-center gap-6 text-slate-900 font-bold text-sm">
                 <span className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 opacity-70" />
-                  {selectedResource.read_time} read
-                </span>
-                <span className="flex items-center gap-2">
-                  <IconComponent className="h-4 w-4 opacity-70" />
-                  Guide
+                  <IconComponent className="h-5 w-5 text-primary" />
+                  Clinical Resource
                 </span>
               </div>
             </div>
@@ -122,9 +121,10 @@ const Resources = () => {
                 .prose h2 { font-weight: 800; color: #0f172a; margin-top: 2rem; }
                 .prose h3 { font-weight: 700; color: #1e293b; margin-top: 1.5rem; }
                 .prose ul { list-style-type: none; padding-left: 0; }
-                .prose li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+                .prose li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; color: #0f172a; font-weight: 500; }
                 .prose li::before { content: '•'; position: absolute; left: 0; color: #2563eb; font-weight: bold; }
-                .prose p { line-height: 1.8; color: #475569; }
+                .prose p { line-height: 1.8; color: #0f172a; font-weight: 500; font-size: 1.05rem; }
+                .prose strong { color: #000; font-weight: 800; }
               `}} />
               <div dangerouslySetInnerHTML={{ __html: selectedResource.content }} />
               
@@ -259,15 +259,14 @@ const Resources = () => {
                           </div>
                           <div className="p-6 flex-1 flex flex-col">
                             <div className="flex items-center gap-2 mb-3">
-                              <Badge variant="secondary" className="bg-slate-100 text-[9px] uppercase tracking-tighter font-bold text-slate-500">
+                              <Badge variant="secondary" className="bg-slate-100 text-[9px] uppercase tracking-tighter font-bold text-slate-900 border-slate-200">
                                 {cat.title}
                               </Badge>
-                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{resource.read_time}</span>
                             </div>
                             <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">
                               {resource.title}
                             </h3>
-                            <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6 line-clamp-2">
+                            <p className="text-sm text-slate-700 font-bold leading-relaxed mb-6 line-clamp-2">
                               {resource.description}
                             </p>
                             <div className="mt-auto flex items-center text-primary font-bold text-xs uppercase tracking-widest">
