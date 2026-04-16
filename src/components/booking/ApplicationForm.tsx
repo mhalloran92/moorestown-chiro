@@ -132,10 +132,10 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent 
         className={`${
-          showCalendar ? "sm:max-w-[900px]" : "sm:max-w-[425px]"
-        } transition-all duration-500 overflow-hidden flex flex-col rounded-[32px] bg-card/95 backdrop-blur-xl border border-primary/20 shadow-2xl shadow-primary/10 p-0`}
+          showCalendar ? "max-w-4xl w-full" : "sm:max-w-[425px]"
+        } transition-all duration-500 overflow-y-auto flex flex-col rounded-[32px] bg-card/95 backdrop-blur-xl border border-primary/20 shadow-2xl shadow-primary/10 p-0 max-h-[95vh]`}
       >
-        <div className="p-6 md:p-8 overflow-y-auto flex-1">
+        <div className="p-6 md:p-8 flex-1">
           <DialogHeader className="space-y-3 mb-6">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-2xl md:text-3xl font-black tracking-tight text-white">
@@ -301,7 +301,7 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
               </div>
             </div>
           ) : (
-            <div className="mt-4 h-full min-h-[500px] bg-white/5 rounded-2xl overflow-hidden border border-white/5">
+            <div className="mt-4 h-[700px] min-h-[600px] bg-white/5 rounded-2xl overflow-hidden border border-white/5 w-full">
               <InlineWidget
                 url={selectedServiceObj?.calendlyUrl || siteConfig.calendly.url}
                 prefill={{
@@ -311,7 +311,8 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
                 }}
                 styles={{
                   height: "100%",
-                  minHeight: "500px",
+                  width: "100%",
+                  minHeight: "600px",
                 }}
                 pageSettings={{
                   backgroundColor: "ffffff",
