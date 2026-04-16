@@ -2,7 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+const SERVICE_ROLE_KEY = Deno.env.get("SERVICE_ROLE_KEY") ?? "";
 
 Deno.serve(async (req: Request) => {
   // 1. Basic security / health check
@@ -34,13 +34,13 @@ Deno.serve(async (req: Request) => {
     console.log(`Processing booking for: ${inviteeEmail} (${eventTypeName}) at ${startTime}`);
 
     // Create Supabase client with SERVICE ROLE key to bypass RLS
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
     // 2. Find the profile by email
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("id")
-      .eq("email", inviteeEmail)
+      .ilike("email", inviteeEmail)
       .single();
 
     if (profileError || !profile) {
