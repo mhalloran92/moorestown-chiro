@@ -9,6 +9,7 @@ import {
   Bell,
   Search,
   User as UserIcon,
+  Menu,
   ChevronDown,
   ChevronUp,
   BookOpen,
