@@ -26,9 +26,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CalendlyPopupButton from "@/components/calendly/CalendlyPopupButton";
 
 const ClientDashboard = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { data: bookings, isLoading } = useClientBookings(user?.id);
-  const { data: profile } = useClientProfile(user?.id);
   const cancelMutation = useCancelBooking();
   const [activeTab, setActiveTab] = useState("upcoming");
 

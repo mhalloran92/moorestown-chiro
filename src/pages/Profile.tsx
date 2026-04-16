@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import CalendlyPopupButton from "@/components/calendly/CalendlyPopupButton";
 
 export const Profile = () => {
-  const { user, avatarUrl, refreshAvatar } = useAuth();
+  const { user, avatarUrl, refreshProfile } = useAuth();
   const { toast } = useToast();
   
   const [loading, setLoading] = useState(true);
@@ -58,15 +58,17 @@ export const Profile = () => {
     try {
       const { error } = await supabase
         .from("profiles")
-        .update({
+        .upsert({
+          id: user?.id,
           first_name: firstName,
           last_name: lastName,
           phone: phone,
           updated_at: new Date().toISOString(),
-        })
-        .eq("id", user?.id);
+        });
         
       if (error) throw error;
+      
+      await refreshProfile();
       
       toast({
         title: "Profile updated",
@@ -108,7 +110,7 @@ export const Profile = () => {
         
       if (updateError) throw updateError;
       
-      await refreshAvatar();
+      await refreshProfile();
       
       toast({
         title: "Profile picture updated",
