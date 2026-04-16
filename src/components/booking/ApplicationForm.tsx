@@ -132,7 +132,7 @@ export default function ApplicationForm({ isOpen, onOpenChange, service }: Appli
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent 
         className={`${
-          showCalendar ? "sm:max-w-[900px] h-[90vh]" : "sm:max-w-[425px]"
+          showCalendar ? "sm:max-w-[900px]" : "sm:max-w-[425px]"
         } transition-all duration-500 overflow-hidden flex flex-col rounded-[32px] bg-card/95 backdrop-blur-xl border border-primary/20 shadow-2xl shadow-primary/10 p-0`}
       >
         <div className="p-6 md:p-8 overflow-y-auto flex-1">
